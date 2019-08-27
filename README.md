@@ -10,8 +10,14 @@ My company uses Datadog for logging and monitoring performance metrics for our s
 
 3. This is the example implmentation. Decided that the line by line logs were not very useful in Datadog UI. I took the elasticsearch logger and stripped it bare. Now, it writes to the default file, and once it finishes writing to file, it'll read the file into a string and write the contents to stdout. Worked perfectly for our use case. Nonetheless, the airflow documentation doesn't make it very clear how much you can customize the logger. It seems that you can customize it as much as you want! You just need to edit `config.handlers.task.class` to reference the correct custom module.
 
-### The Implmentation
+### The Implementation
 - The reason why we are extending file_task_hander with is described in the issues below. This handler just wraps the file_task_handler with a stream_handler, waits until the file_task_handler closes, reads the log file into a string, and then prints to stdout. Then datadog will pick it up from stdout. The implmentation is used in kubernetes pods with a datadog-agent daemonset.
+
+### How To
+```
+docker-compose build
+docker-compose up
+```
 
 ### Issues I ran into
 - I tried setting `propagate=true` in `config.loggers.airflow.task`, but ran into an issue where the kubernetes pods were eating up all the CPU and dying. After some testing, it seems that even if you just extend the File_task_handler, and try to `print('hello')`, it still has some sort of memory leak. Didn't really investigate into this, but could be from either the python standard library, or the logger implmentation... I chose to not waste time investigating into this.
