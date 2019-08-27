@@ -1,0 +1,27 @@
+version: '3'
+services:
+    postgres:
+        image: postgres:9.6
+        environment:
+            - POSTGRES_USER=airflow
+            - POSTGRES_PASSWORD=airflow
+            - POSTGRES_DB=airflow
+
+    webserver:
+        build: .
+        restart: always
+        depends_on:
+            - postgres
+        environment:
+            - LOAD_EX=n
+            - EXECUTOR=Local
+            - AIRFLOW__CORE__LOGGING_CONFIG_CLASS=config.airflow_custom_log_settings.CONFIG
+            - AIRFLOW__STDOUT__JSON_FORMAT=True
+            - AIRFLOW__STDOUT__WRITE_STDOUT=True
+            - AIRFLOW__STDOUT__JSON_FIELDS=log_path, message
+        volumes:
+            - ./dags:/usr/local/airflow/dags
+
+        ports:
+            - "8080:8080"
+        command: webserver
