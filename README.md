@@ -1,6 +1,13 @@
 # Airflow Custom Logger Example
 You can customize pretty much everything about airflow logging.
 
+- [Background](#background)
+- [The Implementation](#the-implementation)
+- [How To](#how-to)
+- [Issues I Ran Into](#issues-i-ran-into)
+
+---
+
 ### Background
 My company uses Datadog for logging and monitoring performance metrics for our services. We use kubernetes and needed a way to surface airflow task runs to datadog.
 
